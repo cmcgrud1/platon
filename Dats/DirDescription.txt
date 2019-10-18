@@ -1,0 +1,3 @@
+This stores all the .dat files with the information about the data sets used modle the retrievals. The files formate must be like so:
+#Wav_low     Wav_up     Depth          Err_up          Err_dwn          Insturment          Offset?
+#(Angstroms) (Angstroms) (ppm)         (ppm)           (ppm)          	(name)         	    (YES/NO)
