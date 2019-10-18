@@ -1,0 +1,13 @@
+Run started on 2019-10-14 23.51.53
+
+
+This specific retrieval model was done by:
+*Fitting radius of the planet (Rp) with uniform priors containing bounds of 1.2392R_jup to 1.8588R_jup.
+*Fitting equilibrium Temp of the star (Tp) with uniform priors containing bounds of 787.5K to 2362.5K.
+*Fitting depth offset for Magellan/IMAC data with uniform priors containing bounds of -0.008559403543518519 to 0.008559403543518519.
+The number of live points (number of samples drawn) was 10.
+
+
+
+Run ended on 2019-10-15 0.20.46
+Total run time: 0.48122060332hr 
