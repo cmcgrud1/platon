@@ -21,7 +21,7 @@ from .constants import k_B, AMU, M_sun, Teff_sun, G, h, c
 from ._get_data import get_data
 from ._mie_cache import MieCache
 from .errors import AtmosphereError
-
+# import pickle #JAMES
 
 class TransitDepthCalculator:
     def __init__(self, include_condensation=True, num_profile_heights=250,
@@ -260,8 +260,7 @@ class TransitDepthCalculator:
 
         raise ValueError("Unrecognized format for custom_abundances")
 
-    def _get_binned_corrected_depths(self, depths, T_star, T_spot,
-                                    spot_cov_frac):
+    def _get_binned_corrected_depths(self, depths, T_star, T_spot,spot_cov_frac):
         if spot_cov_frac is None:
             spot_cov_frac = 0
 
@@ -290,10 +289,13 @@ class TransitDepthCalculator:
         correction_factors = unspotted_spectrum/stellar_spectrum
 
         if self.wavelength_bins is None:
-            return self.lambda_grid, depths * correction_factors, stellar_spectrum
+            return self.lambda_grid, depths * correction_factors, stellar_spectrum, correction_factors
         
         binned_wavelengths = []
         binned_depths = []
+        # JAMES
+        binned_correction_factors = []
+        binned_stellar_spectrum = []        
         for (start, end) in self.wavelength_bins:
             cond = np.logical_and(
                 self.lambda_grid >= start,
@@ -301,8 +303,12 @@ class TransitDepthCalculator:
             binned_wavelengths.append(np.mean(self.lambda_grid[cond]))
             binned_depth = np.average(depths[cond] * correction_factors[cond], weights=stellar_spectrum[cond])
             binned_depths.append(binned_depth)
+            # JAMES
+            binned_correction_factors.append(correction_factors[cond].mean())
+            binned_stellar_spectrum.append(stellar_spectrum[cond].mean())
 
-        return np.array(binned_wavelengths), np.array(binned_depths), stellar_spectrum
+        return np.array(binned_wavelengths), np.array(binned_depths), stellar_spectrum, \
+        correction_factors, binned_stellar_spectrum, binned_correction_factors #CHIMA/JAMES added correction_factors, binned_stellar, and binned_correction
 
     def _validate_params(self, temperature, custom_T_profile, logZ, CO_ratio, cloudtop_pressure):
         if temperature is not None:
@@ -350,7 +356,7 @@ class TransitDepthCalculator:
                        T_star=None, T_spot=None, spot_cov_frac=None,
                        ri=None, frac_scale_height=1, number_density=0,
                        part_size=1e-6, part_size_std=0.5,
-                       full_output=False, min_abundance=1e-99):
+                       full_output=False, min_abundance=1e-99, InstNum = None, **Offset_kwargs):
         '''
         Computes transit depths at a range of wavelengths, assuming an
         isothermal atmosphere.  To choose bins, call change_wavelength_bins().
@@ -437,7 +443,18 @@ class TransitDepthCalculator:
             leaving this at the default value of 0.5.
         full_output : bool, optional
             If True, returns info_dict as a third return value.
-
+        
+        ------CHIMA. To allow for the offset terms to be added------
+        Offset_kwargs: Two terms per offset & one for having offsets in general
+        InstNum : int, optional
+            If included provides the number of insturments in the dataset. If you want to fit at least
+            one insturment with offsets, then all other insturments must have below offset terms. 
+        OffsetN : float, optional
+            If included, provided the inital guess of the depth offset of the given insturment
+        OffsetN_Wavs : list, optional 
+            If included, provides the wavelength range in which the insturment observses. 
+            CAN'T have to insturments with overlapping wavelength coverage.
+            Must be included if OffsetN is included.
         Raises
         ------
         ValueError
@@ -528,11 +545,20 @@ class TransitDepthCalculator:
         transit_depths = (np.min(radii) / star_radius)**2 \
             + 2 / star_radius**2 * absorption_fraction.dot(radii[1:] * dr)
 
-        binned_wavelengths, binned_depths, stellar_spectrum = self._get_binned_corrected_depths(transit_depths, T_star, T_spot, spot_cov_frac)
-        
+        if self.wavelength_bins is None:
+            binned_wavelengths, binned_depths, stellar_spectrum, correction_factors = self._get_binned_corrected_depths(transit_depths, T_star, T_spot, spot_cov_frac)   
+        else:
+            binned_wavelengths, binned_depths, stellar_spectrum, correction_factors, binned_stellar_spectrum, binned_correction_factors \
+            = self._get_binned_corrected_depths(transit_depths, T_star, T_spot, spot_cov_frac)
+        if InstNum:
+            for I in range(InstNum): #CHIMA. To add offsets
+                AddOff = "binned_depths[np.logical_and(binned_wavelengths > Offset_kwargs['Offset"+str(I+1)+"_Wavs'][0],"
+                AddOff += "binned_wavelengths < Offset_kwargs['Offset"+str(I+1)+"_Wavs'][1])] += Offset_kwargs['Offset"+str(I+1)+"']"
+                exec(AddOff) 
         if full_output:
             output_dict = {"absorption_coeff_atm": absorption_coeff_atm,
                            "tau_los": tau_los,
+                           "correction_factors": correction_factors,
                            "stellar_spectrum": stellar_spectrum,
                            "radii": radii,
                            "P_profile": P_profile,
@@ -540,7 +566,10 @@ class TransitDepthCalculator:
                            "mu_profile": mu_profile,
                            "atm_abundances": atm_abundances,
                            "unbinned_depths": transit_depths,
-                           "unbinned_wavelengths": self.lambda_grid}
+                           "unbinned_wavelengths": self.lambda_grid} #CHIMA/JAMES added correction_factors
+            if self.wavelength_bins is not None: #CHIMA/JAMES added binned correction_factors/stellar_spectrum
+                output_dict["binned_correction_factors"] = binned_correction_factors
+                output_dict["binned_stellar_spectrum"] = binned_stellar_spectrum
             return binned_wavelengths, binned_depths, output_dict
 
         return binned_wavelengths, binned_depths

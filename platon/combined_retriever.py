@@ -11,6 +11,7 @@ from dynesty import plotting as dyplot
 import dynesty.utils
 import copy
 
+# import pickle #JAMES
 from .transit_depth_calculator import TransitDepthCalculator
 from .eclipse_depth_calculator import EclipseDepthCalculator
 from .fit_info import FitInfo
@@ -88,8 +89,7 @@ class CombinedRetriever:
                     10**fit_info._get("log_cloudtop_P"))
 
     def _ln_like(self, params, transit_calc, eclipse_calc, fit_info, measured_transit_depths,
-                 measured_transit_errors, measured_eclipse_depths,
-                 measured_eclipse_errors, plot=False):
+                 measured_transit_errors, measured_eclipse_depths,measured_eclipse_errors, plot=False):
 
         if not fit_info._within_limits(params):
             return -np.inf
@@ -113,6 +113,11 @@ class CombinedRetriever:
         number_density = 10.0**params_dict["log_number_density"]
         part_size = 10.0**params_dict["log_part_size"]
         ri = params_dict["ri"]
+        InstNum = params_dict["InstNum"]
+        if InstNum:
+            for I in range(InstNum): #CHIMA. To add the N number of offsets. One for each insturment
+                exec('Offset%s=params_dict["Offset%s"]'%(str(I+1),str(I+1)))
+                exec('Offset%s_Wavs=params_dict["Offset%s_Wavs"]'%(str(I+1),str(I+1)))
 
         if Rs <= 0 or Mp <= 0:
             return -np.inf
@@ -123,17 +128,19 @@ class CombinedRetriever:
                 if T is None:
                     raise ValueError("Must fit for T if using transit depths")
                 
-                transit_wavelengths, calculated_transit_depths, info_dict = transit_calc.compute_depths(
-                    Rs, Mp, Rp, T, logZ, CO_ratio,
-                    scattering_factor=scatt_factor, scattering_slope=scatt_slope,
-                    cloudtop_pressure=cloudtop_P, T_star=T_star,
-                    T_spot=T_spot, spot_cov_frac=spot_cov_frac,
-                    frac_scale_height=frac_scale_height, number_density=number_density,
-                    part_size=part_size, ri=ri, full_output=True)
+                #CHIMA. To add the N number of offset terms to the transit_calc function
+                TranCalStr ="transit_wavelengths, calculated_transit_depths, info_dict = transit_calc.compute_depths("
+                TranCalStr +="Rs, Mp, Rp, T, logZ=logZ,CO_ratio=CO_ratio,scattering_factor=scatt_factor, scattering_slope=scatt_slope,"
+                TranCalStr +="cloudtop_pressure=cloudtop_P, T_star=T_star,T_spot=T_spot, spot_cov_frac=spot_cov_frac,frac_scale_height"
+                TranCalStr +="=frac_scale_height, number_density=number_density,part_size=part_size, ri=ri, full_output=True, InstNum = InstNum"
+                if InstNum:
+                    for o in range(InstNum): 
+                        TranCalStr += ", Offset"+str(o+1)+"=Offset"+str(o+1)+",Offset"+str(o+1)+"_Wavs=Offset"+str(o+1)+"_Wavs"
+                exec(TranCalStr+")")
                 residuals = calculated_transit_depths - measured_transit_depths
                 scaled_errors = error_multiple * measured_transit_errors
                 ln_likelihood += -0.5 * np.sum(residuals**2 / scaled_errors**2 + np.log(2 * np.pi * scaled_errors**2))
-                
+
                 if plot:
                     plt.figure(1)
                     plt.plot(METRES_TO_UM * info_dict["unbinned_wavelengths"], info_dict["unbinned_depths"], alpha=0.2, color='b', label="Calculated (unbinned)")
@@ -286,10 +293,8 @@ class CombinedRetriever:
 
     def run_multinest(self, transit_bins, transit_depths, transit_errors,
                       eclipse_bins, eclipse_depths, eclipse_errors,
-                      fit_info,
-                      include_condensation=True, plot_best=False,
-                      maxiter=None, maxcall=None, nlive=100,
-                      **dynesty_kwargs):
+                      fit_info, include_condensation=True, plot_best=False,
+                      maxiter=None, maxcall=None, nlive=100,**dynesty_kwargs):
         '''Runs nested sampling to retrieve atmospheric parameters.
 
         Parameters
@@ -394,7 +399,7 @@ class CombinedRetriever:
                              scatt_slope=4, error_multiple=1, T_star=None,
                              T_spot=None, spot_cov_frac=None,frac_scale_height=1,
                              log_number_density=-np.inf, log_part_size =-6, ri = None,
-                             profile_type = 'isothermal', **profile_kwargs):
+                             profile_type = 'isothermal',InstNum = None, **profile_kwargs):
         '''Get a :class:`.FitInfo` object filled with best guess values.  A few
         parameters are required, but others can be set to default values if you
         do not want to specify them.  All parameters are in SI.

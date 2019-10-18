@@ -68,8 +68,7 @@ class Retriever:
 
     def run_multinest(self, wavelength_bins, depths, errors, fit_info,
                       include_condensation=True, plot_best=False,
-                      maxiter=None, maxcall=None, nlive=100,
-                      **dynesty_kwargs):
+                      maxiter=None, maxcall=None, nlive=100,**dynesty_kwargs):
         '''Runs nested sampling to retrieve atmospheric parameters.
 
         Parameters
@@ -116,7 +115,7 @@ class Retriever:
                              scatt_slope=4, error_multiple=1, T_star=None,
                              T_spot=None, spot_cov_frac=None,frac_scale_height=1,
                              log_number_density=-np.inf, log_part_size =-6,
-                             part_size_std = 0.5, ri = None):
+                             part_size_std = 0.5, ri = None,InstNum = None,**profile_kwargs):
         '''Get a :class:`.FitInfo` object filled with best guess values.  A few
         parameters are required, but others can be set to default values if you
         do not want to specify them.  All parameters are in SI.
@@ -129,5 +128,8 @@ class Retriever:
             This object is used to indicate which parameters to fit for, which
             to fix, and what values all parameters should take.'''
 
-        fit_info = FitInfo(locals().copy())
+        all_variables = locals().copy() #CHIMA. To allow for arbitary named offset terms to be included
+        del all_variables["profile_kwargs"]
+        all_variables.update(profile_kwargs)
+        fit_info = FitInfo(all_variables)
         return fit_info
