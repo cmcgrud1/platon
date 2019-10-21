@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.interpolate
 import emcee
-import corner
+# import corner
 import pickle
 import retrieval_input as RI
 import datetime
@@ -59,7 +59,7 @@ if NumInst:
 # First, extract data:
 data_fname = 'Dats/'+RI.dataset+'.dat'
 print("Using: "+RI.dataset+'.dat')
-data = np.genfromtxt(data_fname,dtype=None)
+data = np.genfromtxt(data_fname, dtype=None, encoding=None)
 
 # Save it into our data dictionary:
 data_dictionary = {}
@@ -90,7 +90,7 @@ bins_up =  np.array([])
 bins_dwn = np.array([])
 depths = np.array([])
 errors = np.array([])
-Inst = data_dictionary.keys()
+Inst = list(data_dictionary.keys())
 InstWavRng = []
 for i in range(len(Inst)):
     bins_up = np.append(bins_up, data_dictionary[Inst[i]]['wup']*1e-10) # to convert from angstrom to meters
