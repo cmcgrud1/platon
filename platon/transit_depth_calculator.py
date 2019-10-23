@@ -552,9 +552,9 @@ class TransitDepthCalculator:
             = self._get_binned_corrected_depths(transit_depths, T_star, T_spot, spot_cov_frac)
         if InstNum:
             for I in range(InstNum): #CHIMA. To add offsets
-                AddOff = "binned_depths[np.logical_and(binned_wavelengths > Offset_kwargs['Offset"+str(I+1)+"_Wavs'][0],"
-                AddOff += "binned_wavelengths < Offset_kwargs['Offset"+str(I+1)+"_Wavs'][1])] += Offset_kwargs['Offset"+str(I+1)+"']"
-                exec(AddOff) 
+                cond1 = binned_wavelengths > Offset_kwargs[f"Offset{I+1}_Wavs"][0]
+                cond2 = binned_wavelengths < Offset_kwargs[f"Offset{I+1}_Wavs"][1]
+                binned_depths[np.logical_and(cond1, cond2)] += Offset_kwargs[f"Offset{I+1}"]
         if full_output:
             output_dict = {"absorption_coeff_atm": absorption_coeff_atm,
                            "tau_los": tau_los,

@@ -38,7 +38,7 @@ spot_cov_fracBnds = None #[0,0.6]
 #Offsets per each insturment you have. CAN take arbitrary number of offsets. Include offset parameters even,
 #even if specific insturment doesn't need offset. It needs to be included for formating purposes. 
 #Just set all terms to 0 if no offsets are needed. Have offsets orded in same order of .dat file
-NumInst = None #3 #Should reflect number of offsets. None if absolutely no offset needed
+NumInst = 3 #Should reflect number of offsets. None if absolutely no offset needed
 Offset1 = 0.0001  #For IMACS/Magellan, initial offset guess
 Offset1_Rng = 0.5 # fraction of MeanDepth for prior on offset
 Offset1_Wavs = [3.5e-7, 1e-6] #Wavlength range, in meters, which insturment observes

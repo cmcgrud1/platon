@@ -127,16 +127,30 @@ class CombinedRetriever:
             if measured_transit_depths is not None:
                 if T is None:
                     raise ValueError("Must fit for T if using transit depths")
-                
+
                 #CHIMA. To add the N number of offset terms to the transit_calc function
-                TranCalStr ="transit_wavelengths, calculated_transit_depths, info_dict = transit_calc.compute_depths("
-                TranCalStr +="Rs, Mp, Rp, T, logZ=logZ,CO_ratio=CO_ratio,scattering_factor=scatt_factor, scattering_slope=scatt_slope,"
-                TranCalStr +="cloudtop_pressure=cloudtop_P, T_star=T_star,T_spot=T_spot, spot_cov_frac=spot_cov_frac,frac_scale_height"
-                TranCalStr +="=frac_scale_height, number_density=number_density,part_size=part_size, ri=ri, full_output=True, InstNum = InstNum"
+                transit_cal_kwargs = {
+                    "logZ": logZ,
+                    "CO_ratio": CO_ratio,
+                    "scattering_factor": scatt_factor,
+                    "scattering_slope": scatt_slope,
+                    "cloudtop_pressure": cloudtop_P,
+                    "T_star": T_star,
+                    "T_spot": T_spot,
+                    "spot_cov_frac": spot_cov_frac,
+                    "frac_scale_height": frac_scale_height,
+                    "number_density": number_density,
+                    "part_size": part_size,
+                    "ri": ri,
+                    "full_output": True,
+                    "InstNum": InstNum,
+                }
                 if InstNum:
-                    for o in range(InstNum): 
-                        TranCalStr += ", Offset"+str(o+1)+"=Offset"+str(o+1)+",Offset"+str(o+1)+"_Wavs=Offset"+str(o+1)+"_Wavs"
-                exec(TranCalStr+")")
+                    for o in range(InstNum):
+                        transit_cal_kwargs[f"Offset{o+1}"] = params_dict[f"Offset{o+1}"]
+                        transit_cal_kwargs[f"Offset{o+1}_Wavs"] = params_dict[f"Offset{o+1}_Wavs"]
+
+                transit_wavelengths, calculated_transit_depths, info_dict = transit_calc.compute_depths(Rs, Mp, Rp, T, **transit_cal_kwargs)
                 residuals = calculated_transit_depths - measured_transit_depths
                 scaled_errors = error_multiple * measured_transit_errors
                 ln_likelihood += -0.5 * np.sum(residuals**2 / scaled_errors**2 + np.log(2 * np.pi * scaled_errors**2))
