@@ -1,2 +1,9 @@
 *.pyc
 *~
+Plt_Retriv_InptW31.py
+retrieval_inputW31.py
+WASP31
+Dats/ExoReCmbind_LC114QdEd.dat
+Dats/ExoReCmbind_LC114QdEd_NoOffset.dat
+Dats/MakeTestDat.py
+Dats/TestPlot.py

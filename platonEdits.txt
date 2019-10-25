@@ -13,3 +13,12 @@ CHIMA:
 6)The way PlatonPlot.py works is that it uses the results of the retrieval to resample from the probability distribution the Nested sampling found via the dynesty.utils.resample_equal() function. Then your resampled parameters are used to recompute values such as the transit depth and everything in the .compute_depths()'s info_dict. This is then used to produce the median fit and 1sig confidence bounds of the transit depth. This could also be used to plot the median fit and 1sig confidence bounds of other things such as absorption coefficients, T-P profiles, atmospheric abundances, etc. which is saved in results_full_output.pkl. This was found to be much faster of a run time rather than saving the initial MultiNest samples as it's sampling. PlatonPlot.py also saves the corner plots of MultiNest's results.
 
 7)The way the retriever_multinest.py data storage is set up, is there will be a subdirectory created based off the Target name specified in retrieval_input.py, then another subdirectory named after what all is being fit for. It saves the 2 retriever.run_multinest results (results & fit info), an INFO.txt file with details about you specific run, and the .dat file of the data you used. When you run PlatonPlot.py for the 1st time it saves some .pkl files needed to do the resampling properly a .dat file with the fitted transmission spectrum median and 1sig confidence bounds.
+
+
+
+TODO:
+1)Have corner plot a vertical line that represents the best fit (different from the mean), with a different color from the confidence intervals
+
+2)Kill all usage of exec()
+
+3)Figure out how to implement error_multiple fit results to final plot

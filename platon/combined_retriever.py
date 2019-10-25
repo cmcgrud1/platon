@@ -18,7 +18,7 @@ from .fit_info import FitInfo
 from .constants import METRES_TO_UM, M_jup, R_jup, R_sun
 from ._params import _UniformParam
 from .errors import AtmosphereError
-from ._output_writer import write_param_estimates_file
+# from ._output_writer import write_param_estimates_file
 from .TP_profile import Profile
 
 class CombinedRetriever:
@@ -147,8 +147,8 @@ class CombinedRetriever:
                 }
                 if InstNum:
                     for o in range(InstNum):
-                        transit_cal_kwargs[f"Offset{o+1}"] = params_dict[f"Offset{o+1}"]
-                        transit_cal_kwargs[f"Offset{o+1}_Wavs"] = params_dict[f"Offset{o+1}_Wavs"]
+                        transit_cal_kwargs["Offset"+str(o+1)] = params_dict["Offset"+str(o+1)]
+                        transit_cal_kwargs["Offset"+str(o+1)+"_Wavs"] = params_dict["Offset"+str(o+1)"_Wavs"]
 
                 transit_wavelengths, calculated_transit_depths, info_dict = transit_calc.compute_depths(Rs, Mp, Rp, T, **transit_cal_kwargs)
                 residuals = calculated_transit_depths - measured_transit_depths
@@ -292,11 +292,11 @@ class CombinedRetriever:
         best_params_arr = sampler.flatchain[np.argmax(
             sampler.flatlnprobability)]
         
-        write_param_estimates_file(
-            sampler.flatchain,
-            best_params_arr,
-            np.max(sampler.flatlnprobability),
-            fit_info.fit_param_names)
+        # write_param_estimates_file(
+        #     sampler.flatchain,
+        #     best_params_arr,
+        #     np.max(sampler.flatlnprobability),
+        #     fit_info.fit_param_names)
 
         if plot_best:
              self._ln_prob(best_params_arr, transit_calc, eclipse_calc, fit_info,
@@ -389,11 +389,11 @@ class CombinedRetriever:
         normalized_weights = np.exp(result.logwt)/np.sum(np.exp(result.logwt))
         result.weights = normalized_weights
         
-        write_param_estimates_file(
-            dynesty.utils.resample_equal(result.samples, normalized_weights),
-            best_params_arr,
-            np.max(result.logp),
-            fit_info.fit_param_names)
+        # write_param_estimates_file(
+        #     dynesty.utils.resample_equal(result.samples, normalized_weights),
+        #     best_params_arr,
+        #     np.max(result.logp),
+        #     fit_info.fit_param_names)
 
         if plot_best:
             self._ln_prob(best_params_arr, transit_calc, eclipse_calc, fit_info,

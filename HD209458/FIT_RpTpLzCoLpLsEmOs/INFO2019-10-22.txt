@@ -1,0 +1,18 @@
+Run started on 2019-10-22 20.31.43
+
+
+This specific retrieval model was done by:
+*Fitting radius of the planet (Rp) with uniform priors containing bounds of 1.104R_jup to 1.656R_jup.
+*Fitting equilibrium Temp of the star (Tp) with uniform priors containing bounds of 600.0K to 1800.0K.
+*Fitting log metallicity of the star (Lz) with uniform priors containing bounds of -1dex to 3dex.
+*Fitting CO ratio of the planet (Co) with uniform priors containing bounds of 0.05 to 2.0.
+*Fitting log cloud top Pressure (Lp) with uniform priors containing bounds of -3dex to 3dex.
+*Fitting log scattering factor (Ls) with uniform priors containing bounds of 0dex to 1dex.
+*Fitting error multiple (Em) with uniform priors containing bounds of 0.5 to 5.
+*Fitting depth offset for HST/STIS data with uniform priors containing bounds of -0.0075685487350000006 to 0.0075685487350000006.
+The number of live points (number of samples drawn per layer) was 1000.
+
+
+
+Run ended on 2019-10-22 21.1.6
+Total run time: 0.489749437239hr 

@@ -13,7 +13,7 @@ from .fit_info import FitInfo
 from .constants import METRES_TO_UM
 from ._params import _UniformParam
 from .errors import AtmosphereError
-from ._output_writer import write_param_estimates_file
+# from ._output_writer import write_param_estimates_file
 from .combined_retriever import CombinedRetriever
 
 class Retriever:

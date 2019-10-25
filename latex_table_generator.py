@@ -1,8 +1,8 @@
 import numpy as np
 from astropy import constants
-
-bf = np.genfromtxt('BestFit.txt',skip_header=2,usecols=[1,2,3,4]) # values
-bf_k = np.genfromtxt('BestFit.txt',skip_header=2,usecols=0,dtype=str) # keys
+Path = 'HD209458/FIT_RpTpLzCoLpLsEm/' #where specific best fit file can be found
+bf = np.genfromtxt(Path+'BestFit.txt',skip_header=2,usecols=[1,2,3,4]) # values
+bf_k = np.genfromtxt(Path+'BestFit.txt',skip_header=2,usecols=0,dtype=str) # keys
 
 for k,v in zip(bf_k,bf):
 
@@ -21,7 +21,7 @@ for k,v in zip(bf_k,bf):
     else: # print all other variables to 2 decimal places
         print("%s = $ %.2f ^{+%.2f} _{-%.2f} $ ; best fitting value = %.2f"%(np.round(k,2),np.round(v_med,2),np.round(v_up,2),np.round(v_low,2),np.round(best_fitting_value,2)))
 
-max_lnprob = np.genfromtxt('BestFit.txt',skip_header=1,skip_footer=len(bf))[1].astype(float)
+max_lnprob = np.genfromtxt(Path+'BestFit.txt',skip_header=1,skip_footer=len(bf))[1].astype(float)
 
 print("-------")
 print("Max lnprob = %.2f"%(np.round(max_lnprob,2)))
