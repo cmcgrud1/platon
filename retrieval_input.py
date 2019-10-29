@@ -1,9 +1,7 @@
-# details about system
+############## General details about system #############
 #Mike's Note: 
 #We recommend either fixing the stellar radius and planetary mass to the measured values, 
 # or only allowing them to vary 2 standard deviations away
-Target = 'HD209458'
-SubFoldExtra = None #To specify strings to the end of the general subfolder name where all results are placed
 Rp = 1.38  #in Jupiter radii
 RpBnds = [Rp-(Rp*.2), Rp+(Rp*.2)] #+/- 20% of measured radius
 Mp = 0.69 # in Jupiter mass
@@ -15,7 +13,8 @@ R_starErr = None #0.05 #Error bars of radius of star -/+, assuming symetric. Fro
 T_star = 6092.0 #K
 TsErr = None #150 #Error bars of Temp of star -/+, assuming symetric. From literature (+50K)
 
-#parameter inital guesses and bounds. In form initia guess, then [lower bound, upper bound]
+############## Retrieval parameter inital guesses and bounds #############
+# In form initia guess, then [lower bound, upper bound]
 #If want to set the parameter fixed, set the lower and upper bound variable to "None"
 nlive = 1000 #default is 1000
 log_scatt_factor= .5
@@ -48,4 +47,8 @@ Offset2_Wavs = [1.1e-6, 1.7e-6] # for HST/WFC3, initial offset guess
 Offset3 = 0 
 Offset3_Rng = None #No offsets
 Offset3_Wavs = [3.0e-6, 6.7e-6] #for Spitzer, initial offset guess
+
+############## Path info #############
+Target = 'HD209458'
+SubFolder = 'Test' #To specify subfolder you want data results to be placed
 dataset = "HD209458b_OfSt"

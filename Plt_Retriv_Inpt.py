@@ -1,9 +1,7 @@
-# details about system
+############# General details about system #############
 #Note: 
 #We recommend either fixing the stellar radius and planetary mass to the measured values, 
 # or only allowing them to vary 2 standard deviations aw
-Target = 'HD209458'
-SubFoldExtra = None #To specify extra strings to general subfolder naming scheme
 Rp = 1.38   #in Jupiter radii
 RpBnds = [Rp-(Rp*.2), Rp+(Rp*.2)] #+/- 20% of measured radius
 Mp =  0.69 # in Jupiter mass
@@ -15,7 +13,8 @@ R_starErr = None #0.05 #Error bars of radius of star -/+, assuming symetric. Fro
 T_star = 6092.0 #K
 TsErr = None #150
 
-#parameter inital guesses and bounds. In form initia guess, then [lower bound, upper bound]
+############## Retrieval parameter inital guesses and bounds #############
+#In form initia guess, then [lower bound, upper bound]
 #If want to set the parameter fixed, set the lower and upper bound variable to "None"
 nlive = 1000 #Number of live samples for Nested Sampeling. default is 1000
 log_scatt_factor= .5
@@ -45,10 +44,14 @@ Offset2_Wavs = [1.1e-6, 1.7e-6]
 Offset3 = 0 
 Offset3_Rng = None 
 Offset3_Wavs = [3.0e-6, 6.7e-6]
-dataset = "HD209458b_OfSt"
 
-#Plotting setting
+############## Plotting setting #############
 N = 1000 # number of elements for each chain to resample. For plotting only. Advised same as nlive
 PlotDepth = False # to plot in terms of depth (ppm) or RpRs
 X_bounds = None #Set the x and y bounds of plot. If set to None, bounds will be determined by data
 Y_bounds = [0.118,0.1271] # in same units as plot units
+
+############## Path info #############
+Target = 'HD209458'
+dataset = "HD209458b_OfSt"
+SubFolder = 'Test'

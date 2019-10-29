@@ -19,6 +19,9 @@ from platon.constants import R_sun, R_jup, M_jup
 if not os.path.exists(RI.Target): #To make the main directory of the retrieval results. Titled by the name of the target
     os.system('mkdir %s'%RI.Target)
 direc_name = RI.Target+'/'
+if not os.path.exists(direc_name+RI.SubFolder): #To put data in subfolders (ex: GibNchima, IMACSnWFC3)
+    os.system('mkdir %s'%direc_name+RI.SubFolder)
+direc_name += SubFoldExtra+'/'
 
 #Parameters form retrieval_input. take values of RI now because don't want to be reading in values from RI much later after starting script
 SubFoldExtra = RI.SubFoldExtra
@@ -180,17 +183,13 @@ if NumInst:
 if nlive != 1000: # the default nlives is 1000
     direc_name += 'N'+str(nlive)
 txtInfo += "The number of live points (number of samples drawn per layer) was " +str(nlive)+".\n"  #want to always print number of live points used
-if SubFoldExtra: #To add extra string values to general subfolder naming scheme
-    direc_name += SubFoldExtra+'/'
-else:
-    direc_name += "/"
 
 # To make results output directories
 if not os.path.exists(direc_name): 
     os.system('mkdir %s'%direc_name)
 os.system("cp %s %s"%(data_fname, direc_name))
 
-#To print summary .txt file
+#To print INFO .txt file
 now = datetime.datetime.now()
 StartT = time.time()
 TimeStamp = str(now.year)+'-'+str(now.month)+'-'+str(now.day)
@@ -204,7 +203,7 @@ result = retriever.run_multinest(bins, depths, errors, fit_info, plot_best=False
 pickle.dump(result,open(direc_name+'multinest_result.pkl','wb'))
 pickle.dump(fit_info,open(direc_name+'multinest_FitInfo.pkl','wb'))
 
-#To output final timestamps in summary .txt file
+#To output final timestamps in INFO .txt file
 End = datetime.datetime.now()
 TotalT = (time.time()-StartT)/(3600.0) #Total run time in hours
 SummaryF = open(direc_name+'INFO'+TimeStamp+'.txt','a+')

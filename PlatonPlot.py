@@ -39,7 +39,7 @@ X_bounds = PRI.X_bounds
 Y_bounds = PRI.Y_bounds
 
 #To load info that the retriever code used
-direc_name = PRI.Target+'/'
+direc_name = PRI.Target+'/'+PRI.SubFolder+'/'
 
 #List of all compute_depths input parameters, in the right order
 ParamNames = ['Rs', 'Mp', 'Rp', 'T', 'logZ', 'CO_ratio', 'log_cloudtop_P', 'log_scatt_factor', 'scatt_slope', 'T_star', 'T_spot', 'spot_cov_frac'] # error_multiple can be fit for in ln_like, but that's after computing depth 
@@ -162,10 +162,6 @@ if InstNum:
 		CNT +=3 # Do every 3rd parameter because the wavelength range (upper and lower bound) of insturment is always fixed
 if PRI.nlive != 1000: # the default nlives is 1000
     direc_name += 'N'+str(PRI.nlive)
-if PRI.SubFoldExtra: #To add extra string values to general subfolder naming scheme
-    direc_name += PRI.SubFoldExtra+'/'
-else:
-    direc_name += '/'
 
 #Loading multinest results
 results = pickle.load(open(direc_name+'multinest_result.pkl', 'r'))

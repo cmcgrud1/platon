@@ -148,7 +148,7 @@ class CombinedRetriever:
                 if InstNum:
                     for o in range(InstNum):
                         transit_cal_kwargs["Offset"+str(o+1)] = params_dict["Offset"+str(o+1)]
-                        transit_cal_kwargs["Offset"+str(o+1)+"_Wavs"] = params_dict["Offset"+str(o+1)"_Wavs"]
+                        transit_cal_kwargs["Offset"+str(o+1)+"_Wavs"] = params_dict["Offset"+str(o+1)+"_Wavs"]
 
                 transit_wavelengths, calculated_transit_depths, info_dict = transit_calc.compute_depths(Rs, Mp, Rp, T, **transit_cal_kwargs)
                 residuals = calculated_transit_depths - measured_transit_depths
